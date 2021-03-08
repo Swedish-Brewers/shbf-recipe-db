@@ -55,36 +55,36 @@ ALTER TABLE data.inventory_hop OWNER TO shbf_writer;
 
 
 CREATE TABLE IF NOT EXISTS data.inventory_hop_mapping (
-    id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    hop_id      uuid NOT NULL REFERENCES data.inventory_hop (id),
-    name        text NOT NULL,
-    created     timestamptz NOT NULL DEFAULT NOW(),
-    updated     timestamptz NOT NULL DEFAULT NOW()
+    id                    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    inventory_hop_id      uuid NOT NULL REFERENCES data.inventory_hop (id),
+    name                  text NOT NULL,
+    created               timestamptz NOT NULL DEFAULT NOW(),
+    updated               timestamptz NOT NULL DEFAULT NOW()
 );
 
 ALTER TABLE data.inventory_hop_mapping OWNER TO shbf_writer;
-CREATE INDEX IF NOT EXISTS inventory_hop_mapping_hop_id_idx ON data.inventory_hop_mapping (hop_id);
+CREATE INDEX IF NOT EXISTS inventory_hop_mapping_inventory_hop_id_idx ON data.inventory_hop_mapping (inventory_hop_id);
 
 
-CREATE TABLE IF NOT EXISTS data.inventory_malt (
+CREATE TABLE IF NOT EXISTS data.inventory_fermentable (
     id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     name        text NOT NULL UNIQUE,
     created     timestamptz NOT NULL DEFAULT NOW(),
     updated     timestamptz NOT NULL DEFAULT NOW()
 );
 
-ALTER TABLE data.inventory_malt OWNER TO shbf_writer;
+ALTER TABLE data.inventory_fermentable OWNER TO shbf_writer;
 
-CREATE TABLE IF NOT EXISTS data.inventory_malt_mapping (
-    id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    malt_id     uuid NOT NULL REFERENCES data.inventory_malt (id),
-    name        text NOT NULL,
-    created     timestamptz NOT NULL DEFAULT NOW(),
-    updated     timestamptz NOT NULL DEFAULT NOW()
+CREATE TABLE IF NOT EXISTS data.inventory_fermentable_mapping (
+    id                           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    inventory_fermentable_id     uuid NOT NULL REFERENCES data.inventory_fermentable (id),
+    name                         text NOT NULL,
+    created                      timestamptz NOT NULL DEFAULT NOW(),
+    updated                      timestamptz NOT NULL DEFAULT NOW()
 );
 
-ALTER TABLE data.inventory_malt_mapping OWNER TO shbf_writer;
-CREATE INDEX IF NOT EXISTS inventory_malt_mapping_malt_id_idx ON data.inventory_malt_mapping (malt_id);
+ALTER TABLE data.inventory_fermentable_mapping OWNER TO shbf_writer;
+CREATE INDEX IF NOT EXISTS inventory_fermentable_mapping_inventory_fermentable_id_idx ON data.inventory_fermentable_mapping (inventory_fermentable_id);
 
 
 CREATE TABLE IF NOT EXISTS data.inventory_yeast (
@@ -98,15 +98,15 @@ ALTER TABLE data.inventory_yeast OWNER TO shbf_writer;
 
 
 CREATE TABLE IF NOT EXISTS data.inventory_yeast_mapping (
-    id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    yeast_id    uuid NOT NULL REFERENCES data.inventory_yeast (id),
-    name        text NOT NULL,
-    created     timestamptz NOT NULL DEFAULT NOW(),
-    updated     timestamptz NOT NULL DEFAULT NOW()
+    id                    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    inventory_yeast_id    uuid NOT NULL REFERENCES data.inventory_yeast (id),
+    name                  text NOT NULL,
+    created               timestamptz NOT NULL DEFAULT NOW(),
+    updated               timestamptz NOT NULL DEFAULT NOW()
 );
 
 ALTER TABLE data.inventory_yeast_mapping OWNER TO shbf_writer;
-CREATE INDEX IF NOT EXISTS inventory_yeast_mapping_yeast_id_idx ON data.inventory_yeast_mapping (yeast_id);
+CREATE INDEX IF NOT EXISTS inventory_yeast_mapping_inventory_yeast_id_idx ON data.inventory_yeast_mapping (inventory_yeast_id);
 
 
 CREATE TABLE IF NOT EXISTS data.inventory_adjunct (
@@ -120,15 +120,15 @@ ALTER TABLE data.inventory_adjunct OWNER TO shbf_writer;
 
 
 CREATE TABLE IF NOT EXISTS data.inventory_adjunct_mapping (
-    id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    adjunct_id  uuid NOT NULL REFERENCES data.inventory_adjunct (id),
-    name        text NOT NULL,
-    created     timestamptz NOT NULL DEFAULT NOW(),
-    updated     timestamptz NOT NULL DEFAULT NOW()
+    id                    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    inventory_adjunct_id  uuid NOT NULL REFERENCES data.inventory_adjunct (id),
+    name                  text NOT NULL,
+    created               timestamptz NOT NULL DEFAULT NOW(),
+    updated               timestamptz NOT NULL DEFAULT NOW()
 );
 
 ALTER TABLE data.inventory_adjunct_mapping OWNER TO shbf_writer;
-CREATE INDEX IF NOT EXISTS inventory_adjunct_mapping_adjunct_id_idx ON data.inventory_adjunct_mapping (adjunct_id);
+CREATE INDEX IF NOT EXISTS inventory_adjunct_mapping_inventory_adjunct_id_idx ON data.inventory_adjunct_mapping (inventory_adjunct_id);
 
 
 CREATE TABLE IF NOT EXISTS data.brewer (
