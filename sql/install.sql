@@ -1,0 +1,4 @@
+-- Recipes
+--\i ./functions/recipe_create.sql
+--\i ./functions/recipe_view.sql
+--\i ./functions/recipe_list.sql
