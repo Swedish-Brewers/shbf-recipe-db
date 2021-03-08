@@ -191,19 +191,19 @@ CREATE INDEX IF NOT EXISTS recipe_brewer_recipe_id_idx ON data.recipe_brewer (re
 CREATE INDEX IF NOT EXISTS recipe_brewer_brewer_id_idx ON data.recipe_brewer (brewer_id);
 
 
-CREATE TABLE IF NOT EXISTS data.recipe_malt (
-    id                    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    recipe_id             uuid NOT NULL REFERENCES data.recipe (id),
-    inventory_malt_id     uuid NOT NULL REFERENCES data.inventory_malt (id),
-    amount                numeric NOT NULL,
-    unit                  data.enum_amount_unit NOT NULL DEFAULT 'g',
-    phase                 data.enum_phase NOT NULL DEFAULT 'mash',
-    created               timestamptz NOT NULL DEFAULT NOW()
+CREATE TABLE IF NOT EXISTS data.recipe_fermentable (
+    id                           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    recipe_id                    uuid NOT NULL REFERENCES data.recipe (id),
+    inventory_fermentable_id     uuid NOT NULL REFERENCES data.inventory_fermentable (id),
+    amount                       numeric NOT NULL,
+    unit                         data.enum_amount_unit NOT NULL DEFAULT 'g',
+    phase                        data.enum_phase NOT NULL DEFAULT 'mash',
+    created                      timestamptz NOT NULL DEFAULT NOW()
 );
 
 ALTER TABLE data.recipe_malt OWNER TO shbf_writer;
-CREATE INDEX IF NOT EXISTS recipe_malt_recipe_id_idx ON data.recipe_malt (recipe_id);
-CREATE INDEX IF NOT EXISTS recipe_malt_inventory_malt_id_idx ON data.recipe_malt (inventory_malt_id);
+CREATE INDEX IF NOT EXISTS recipe_fermentable_recipe_id_idx ON data.recipe_fermentable (recipe_id);
+CREATE INDEX IF NOT EXISTS recipe_fermentable_inventory_fermentable_id_idx ON data.recipe_fermentable (inventory_fermentable_id);
 
 
 CREATE TABLE IF NOT EXISTS data.recipe_hop (
