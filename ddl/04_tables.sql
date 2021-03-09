@@ -11,39 +11,6 @@
 --   refer to account table with column id.
 --
 
-DROP TYPE IF EXISTS data.state CASCADE;
-CREATE TYPE data.state AS ENUM (
-    'active',
-    'inactive'
-);
-
-DROP TYPE IF EXISTS data.enum_amount_unit CASCADE;
-CREATE TYPE data.enum_amount_unit AS ENUM (
-    'g',
-    'kg',
-    'ml',
-    'pkg'
-);
-
-DROP TYPE IF EXISTS data.enum_added_at_unit CASCADE;
-CREATE TYPE data.enum_added_at_unit AS ENUM (
-    'minute',
-    'day',
-    'week',
-    'hour'
-);
-
-DROP TYPE IF EXISTS data.enum_phase CASCADE;
-CREATE TYPE data.enum_phase AS ENUM (
-    'mash',
-    'boil',
-    'whirlpool',
-    'flameout',
-    'secondary',
-    'dryhop'
-);
-
-
 CREATE TABLE IF NOT EXISTS data.inventory_hop (
     id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     name        text NOT NULL UNIQUE,
@@ -201,7 +168,7 @@ CREATE TABLE IF NOT EXISTS data.recipe_fermentable (
     created                      timestamptz NOT NULL DEFAULT NOW()
 );
 
-ALTER TABLE data.recipe_malt OWNER TO shbf_writer;
+ALTER TABLE data.recipe_fermentable OWNER TO shbf_writer;
 CREATE INDEX IF NOT EXISTS recipe_fermentable_recipe_id_idx ON data.recipe_fermentable (recipe_id);
 CREATE INDEX IF NOT EXISTS recipe_fermentable_inventory_fermentable_id_idx ON data.recipe_fermentable (inventory_fermentable_id);
 
