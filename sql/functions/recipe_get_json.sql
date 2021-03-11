@@ -43,74 +43,74 @@ BEGIN
             created,
             updated,
 
-			-- Build hops json list
+            -- Build hops json list
             (
                 SELECT
                     array_to_json(array_agg(row_to_json(h)))
                 FROM (
-					SELECT
-						(SELECT name FROM data.inventory_hop ih WHERE ih.id = rh.inventory_hop_id) AS name,
-						amount,
-						amount_unit,
-						phase,
-						added_at,
-						added_at_unit
-					FROM
-						data.recipe_hop rh
-					WHERE
-						rh.recipe_id = r.id
+                    SELECT
+                        (SELECT name FROM data.inventory_hop ih WHERE ih.id = rh.inventory_hop_id) AS name,
+                        amount,
+                        amount_unit,
+                        phase,
+                        added_at,
+                        added_at_unit
+                    FROM
+                        data.recipe_hop rh
+                    WHERE
+                        rh.recipe_id = r.id
                 ) h
             ) AS hop,
 
-			-- Build fermentables json list
+            -- Build fermentables json list
             (
                 SELECT
                     array_to_json(array_agg(row_to_json(f)))
                 FROM (
-					SELECT
-						(SELECT name FROM data.inventory_fermentable ife WHERE ife.id = rf.inventory_fermentable_id) AS name,
-						amount,
-						amount_unit,
-						phase
-					FROM
-						data.recipe_fermentable rf
-					WHERE
-						rf.recipe_id = r.id
+                    SELECT
+                        (SELECT name FROM data.inventory_fermentable ife WHERE ife.id = rf.inventory_fermentable_id) AS name,
+                        amount,
+                        amount_unit,
+                        phase
+                    FROM
+                        data.recipe_fermentable rf
+                    WHERE
+                        rf.recipe_id = r.id
                 ) f
             ) AS fermentable,
 
-			-- Build yeast json list
+            -- Build yeast json list
             (
                 SELECT
                     array_to_json(array_agg(row_to_json(y)))
                 FROM (
-					SELECT
-						(SELECT name FROM data.inventory_yeast iy WHERE iy.id = ry.inventory_yeast_id) AS name,
-						amount,
-						amount_unit
-					FROM
-						data.recipe_yeast ry
-					WHERE
-						ry.recipe_id = r.id
+                    SELECT
+                        (SELECT name FROM data.inventory_yeast iy WHERE iy.id = ry.inventory_yeast_id) AS name,
+                        amount,
+                        amount_unit
+                    FROM
+                        data.recipe_yeast ry
+                    WHERE
+                        ry.recipe_id = r.id
                 ) y
             ) AS yeast,
 
-			-- Build adjunct json list
+            -- Build adjunct json list
             (
                 SELECT
                     array_to_json(array_agg(row_to_json(a)))
                 FROM (
-					SELECT
-						(SELECT name FROM data.inventory_adjunct ia WHERE ia.id = ra.inventory_adjunct_id) AS name,
-						amount,
-						amount_unit,
-						added_at,
-						added_at_unit,
-						phase
-					FROM
-						data.recipe_adjunct ra
-					WHERE
-						ra.recipe_id = r.id
+                    SELECT
+                        (SELECT name FROM data.inventory_adjunct ia WHERE ia.id = ra.inventory_adjunct_id) AS name,
+                        amount,
+                        amount_unit,
+                        added_at,
+                        added_at_unit,
+                        phase
+                    FROM
+                        data.recipe_adjunct ra
+                    WHERE
+                        ra.recipe_id = r.id
                 ) a
             ) AS adjunct
         FROM
