@@ -35,5 +35,5 @@ cd ../sql
 PGPASSWORD=shbf psql -h localhost -p 5433 -U shbf shbf -f install.sql
 
 echo ""
-echo "You can now connect with: psql -h localhost -p 5433 -U shbf shbf"
+echo "You can now connect with: \"psql -h localhost -p 5433 -U shbf shbf\" (password: shbf)"
 echo ""

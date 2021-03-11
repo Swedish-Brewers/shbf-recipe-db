@@ -15,3 +15,9 @@ Perhaps you need to check pg_hba.conf depending on your distro/os.
 Lastly, from the base directory
 
     ./install.sh <db-name>
+
+## Installation (Docker)
+
+Run the install script
+
+    ./install_with_docker.sh
