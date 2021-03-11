@@ -163,7 +163,7 @@ CREATE TABLE IF NOT EXISTS data.recipe_fermentable (
     recipe_id                    uuid NOT NULL REFERENCES data.recipe (id),
     inventory_fermentable_id     uuid NOT NULL REFERENCES data.inventory_fermentable (id),
     amount                       numeric NOT NULL,
-    unit                         data.enum_amount_unit NOT NULL DEFAULT 'g',
+    amount_unit                  data.enum_amount_unit NOT NULL DEFAULT 'g',
     phase                        data.enum_phase NOT NULL DEFAULT 'mash',
     created                      timestamptz NOT NULL DEFAULT NOW()
 );
@@ -178,7 +178,7 @@ CREATE TABLE IF NOT EXISTS data.recipe_hop (
     recipe_id             uuid NOT NULL REFERENCES data.recipe (id),
     inventory_hop_id      uuid NOT NULL REFERENCES data.inventory_hop (id),
     amount                numeric NOT NULL,
-    unit                  data.enum_amount_unit NOT NULL DEFAULT 'g',
+    amount_unit           data.enum_amount_unit NOT NULL DEFAULT 'g',
     phase                 data.enum_phase NOT NULL DEFAULT 'boil',
     added_at              integer NOT NULL,
     added_at_unit         data.enum_added_at_unit NOT NULL DEFAULT 'minute',
@@ -195,7 +195,7 @@ CREATE TABLE IF NOT EXISTS data.recipe_yeast (
     recipe_id             uuid NOT NULL REFERENCES data.recipe (id),
     inventory_yeast_id    uuid NOT NULL REFERENCES data.inventory_yeast (id),
     amount                numeric NOT NULL,
-    unit                  data.enum_amount_unit NOT NULL DEFAULT 'pkg',
+    amount_unit           data.enum_amount_unit NOT NULL DEFAULT 'pkg',
     created               timestamptz NOT NULL DEFAULT NOW()
 );
 
