@@ -23,8 +23,8 @@ ALTER TABLE data.inventory_hop OWNER TO shbf_writer;
 
 CREATE TABLE IF NOT EXISTS data.inventory_hop_mapping (
     id                    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    inventory_hop_id      uuid NOT NULL REFERENCES data.inventory_hop (id),
-    name                  text NOT NULL,
+    inventory_hop_id      uuid REFERENCES data.inventory_hop (id),
+    name                  text NOT NULL UNIQUE,
     created               timestamptz NOT NULL DEFAULT NOW(),
     updated               timestamptz NOT NULL DEFAULT NOW()
 );
@@ -44,8 +44,8 @@ ALTER TABLE data.inventory_fermentable OWNER TO shbf_writer;
 
 CREATE TABLE IF NOT EXISTS data.inventory_fermentable_mapping (
     id                           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    inventory_fermentable_id     uuid NOT NULL REFERENCES data.inventory_fermentable (id),
-    name                         text NOT NULL,
+    inventory_fermentable_id     uuid REFERENCES data.inventory_fermentable (id),
+    name                         text NOT NULL UNIQUE,
     created                      timestamptz NOT NULL DEFAULT NOW(),
     updated                      timestamptz NOT NULL DEFAULT NOW()
 );
@@ -66,8 +66,8 @@ ALTER TABLE data.inventory_yeast OWNER TO shbf_writer;
 
 CREATE TABLE IF NOT EXISTS data.inventory_yeast_mapping (
     id                    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    inventory_yeast_id    uuid NOT NULL REFERENCES data.inventory_yeast (id),
-    name                  text NOT NULL,
+    inventory_yeast_id    uuid REFERENCES data.inventory_yeast (id),
+    name                  text NOT NULL UNIQUE,
     created               timestamptz NOT NULL DEFAULT NOW(),
     updated               timestamptz NOT NULL DEFAULT NOW()
 );
@@ -88,8 +88,8 @@ ALTER TABLE data.inventory_adjunct OWNER TO shbf_writer;
 
 CREATE TABLE IF NOT EXISTS data.inventory_adjunct_mapping (
     id                    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    inventory_adjunct_id  uuid NOT NULL REFERENCES data.inventory_adjunct (id),
-    name                  text NOT NULL,
+    inventory_adjunct_id  uuid REFERENCES data.inventory_adjunct (id),
+    name                  text NOT NULL UNIQUE,
     created               timestamptz NOT NULL DEFAULT NOW(),
     updated               timestamptz NOT NULL DEFAULT NOW()
 );
