@@ -223,3 +223,27 @@ CREATE INDEX IF NOT EXISTS recipe_adjunct_recipe_id_idx ON data.recipe_adjunct (
 CREATE INDEX IF NOT EXISTS recipe_adjunct_inventory_adjunct_id_idx ON data.recipe_adjunct (inventory_adjunct_id);
 
 
+CREATE TABLE IF NOT EXISTS data.import_source (
+    id                    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    name                  text NOT NULL UNIQUE,
+    description           text,
+    data                  jsonb,
+    created               timestamptz NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE data.import_source OWNER TO shbf_writer;
+
+
+CREATE TABLE IF NOT EXISTS data.import (
+    id                    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    import_source_id      uuid NOT NULL REFERENCES data.import_source (id),
+    identifier            text NOT NULL,
+    data                  jsonb,
+    created               timestamptz NOT NULL DEFAULT NOW(),
+
+    UNIQUE(import_source_id, identifier)
+);
+
+ALTER TABLE data.import OWNER TO shbf_writer;
+CREATE INDEX IF NOT EXISTS import_import_source_id_idx ON data.import (import_source_id);
+CREATE INDEX IF NOT EXISTS import_identifier_idx ON data.import (identifier);
