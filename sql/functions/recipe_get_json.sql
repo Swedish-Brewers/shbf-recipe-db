@@ -87,7 +87,10 @@ BEGIN
                     SELECT
                         (SELECT name FROM data.inventory_yeast iy WHERE iy.id = ry.inventory_yeast_id) AS name,
                         amount,
-                        amount_unit
+                        amount_unit,
+                        fermentation_time,
+                        fermentation_unit,
+                        fermentation_order
                     FROM
                         data.recipe_yeast ry
                     WHERE

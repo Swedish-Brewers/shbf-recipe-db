@@ -196,6 +196,9 @@ CREATE TABLE IF NOT EXISTS data.recipe_yeast (
     inventory_yeast_id    uuid NOT NULL REFERENCES data.inventory_yeast (id),
     amount                numeric NOT NULL,
     amount_unit           data.enum_amount_unit NOT NULL DEFAULT 'pkg',
+    fermentation_time     numeric,
+    fermentation_unit     data.enum_fermentation_unit DEFAULT 'day',
+    fermentation_order    integer DEFAULT 1,
     created               timestamptz NOT NULL DEFAULT NOW()
 );
 
