@@ -15,3 +15,6 @@
 \i ./functions/inventory_adjunct_create.sql
 \i ./functions/inventory_adjunct_mapping_create.sql
 \i ./functions/inventory_adjunct_mapping_update.sql
+
+-- Search
+\i ./functions/search.sql

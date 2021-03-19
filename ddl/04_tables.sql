@@ -250,3 +250,268 @@ CREATE TABLE IF NOT EXISTS data.import (
 ALTER TABLE data.import OWNER TO shbf_writer;
 CREATE INDEX IF NOT EXISTS import_import_source_id_idx ON data.import (import_source_id);
 CREATE INDEX IF NOT EXISTS import_identifier_idx ON data.import (identifier);
+
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS data.inventory_usage AS
+    SELECT
+       'hop' AS inventory,
+       inventory_hop_id AS id,
+       i.name,
+       COUNT(*)
+    FROM
+        data.recipe_hop
+    INNER JOIN
+        data.recipe r
+    ON
+        r.id = data.recipe_hop.recipe_id
+        AND r.state = 'active'
+    INNER JOIN
+        data.inventory_hop i
+    ON
+        i.id = data.recipe_hop.inventory_hop_id
+    GROUP BY
+        inventory_hop_id,
+        i.name
+
+    UNION ALL
+
+    SELECT
+       'fermentable' AS inventory,
+       inventory_fermentable_id AS id,
+       i.name,
+       COUNT(*)
+    FROM
+        data.recipe_fermentable
+    INNER JOIN
+        data.recipe r
+    ON
+        r.id = data.recipe_fermentable.recipe_id
+        AND r.state = 'active'
+    INNER JOIN
+        data.inventory_fermentable i
+    ON
+        i.id = data.recipe_fermentable.inventory_fermentable_id
+    GROUP BY
+        inventory_fermentable_id,
+        i.name
+
+    UNION ALL
+
+    SELECT
+       'yeast' AS inventory,
+       inventory_yeast_id AS id,
+       i.name,
+       COUNT(*)
+    FROM
+        data.recipe_yeast
+    INNER JOIN
+        data.recipe r
+    ON
+        r.id = data.recipe_yeast.recipe_id
+        AND r.state = 'active'
+    INNER JOIN
+        data.inventory_yeast i
+    ON
+        i.id = data.recipe_yeast.inventory_yeast_id
+    GROUP BY
+        inventory_yeast_id,
+        i.name
+
+    UNION ALL
+
+    SELECT
+       'adjunct' AS inventory,
+       inventory_adjunct_id AS id,
+       i.name,
+       COUNT(*)
+    FROM
+        data.recipe_adjunct
+    INNER JOIN
+        data.recipe r
+    ON
+        r.id = data.recipe_adjunct.recipe_id
+        AND r.state = 'active'
+    INNER JOIN
+        data.inventory_adjunct i
+    ON
+        i.id = data.recipe_adjunct.inventory_adjunct_id
+    GROUP BY
+        inventory_adjunct_id,
+        i.name
+;
+
+ALTER TABLE data.inventory_usage OWNER TO shbf_writer;
+CREATE UNIQUE INDEX IF NOT EXISTS inventory_usage_id_idx ON data.inventory_usage (id);
+CREATE INDEX IF NOT EXISTS inventory_usage_name_idx ON data.inventory_usage (name text_pattern_ops);
+REFRESH MATERIALIZED VIEW data.inventory_usage;
+
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS data.search AS
+    SELECT
+        r.id,
+        (
+            to_tsvector(
+                CONCAT(
+                    r.name,
+                    ' ',
+                    r.version,
+                    ' ',
+                    r.description,
+                    ' ',
+                    r.equipment
+                )
+            )
+            ||
+            COALESCE(jsonb_to_tsvector(r.mash_data, '["all"]'), '')
+            ||
+            COALESCE(jsonb_to_tsvector(r.water_data, '["all"]'), '')
+            ||
+
+            -- Get the proper names of all inventory into the input_search column
+            to_tsvector(
+                COALESCE(
+                    (
+                        SELECT
+                            string_agg(
+                                (
+                                    SELECT
+                                        name
+                                    FROM
+                                        data.inventory_hop
+                                    WHERE
+                                        data.inventory_hop.id = data.recipe_hop.inventory_hop_id
+                                )::text,
+                                ' '
+                            )
+                        FROM
+                            data.recipe_hop
+                        WHERE
+                            data.recipe_hop.recipe_id = r.id
+                    ),
+                    ''
+                )
+            )
+            ||
+            to_tsvector(
+                COALESCE(
+                    (
+                        SELECT
+                            string_agg(
+                                (
+                                    SELECT
+                                        name
+                                    FROM
+                                        data.inventory_fermentable
+                                    WHERE
+                                        data.inventory_fermentable.id = data.recipe_fermentable.inventory_fermentable_id
+                                )::text,
+                                ' '
+                            )
+                        FROM
+                            data.recipe_fermentable
+                        WHERE
+                            data.recipe_fermentable.recipe_id = r.id
+                    ),
+                    ''
+                )
+            )
+            ||
+            to_tsvector(
+                COALESCE(
+                    (
+                        SELECT
+                            string_agg(
+                                (
+                                    SELECT
+                                        name
+                                    FROM
+                                        data.inventory_yeast
+                                    WHERE
+                                        data.inventory_yeast.id = data.recipe_yeast.inventory_yeast_id
+                                )::text,
+                                ' '
+                            )
+                        FROM
+                            data.recipe_yeast
+                        WHERE
+                            data.recipe_yeast.recipe_id = r.id
+                    ),
+                    ''
+                )
+            )
+            ||
+            to_tsvector(
+                COALESCE(
+                    (
+                        SELECT
+                            string_agg(
+                                (
+                                    SELECT
+                                        name
+                                    FROM
+                                        data.inventory_adjunct
+                                    WHERE
+                                        data.inventory_adjunct.id = data.recipe_adjunct.inventory_adjunct_id
+                                )::text,
+                                ' '
+                            )
+                        FROM
+                            data.recipe_adjunct
+                        WHERE
+                            data.recipe_adjunct.recipe_id = r.id
+                    ),
+                    ''
+                )
+            )
+        ) AS input_search,
+        -- This column will strictly be used for uuid search
+        (
+            SELECT
+                to_tsvector(
+                    (
+                        SELECT
+                            CONCAT(
+                                hop.data,
+                                ' ',
+                                fermentable.data,
+                                ' ',
+                                yeast.data,
+                                ' ',
+                                adjunct.data
+                            )
+                        FROM (
+                            SELECT string_agg(replace(inventory_hop_id::text, '-', ''), ' ') AS data FROM data.recipe_hop WHERE data.recipe_hop.recipe_id = r.id
+                        ) hop
+
+                        LEFT JOIN (
+                            SELECT string_agg(replace(inventory_fermentable_id::text, '-', ''), ' ') AS data FROM data.recipe_fermentable WHERE data.recipe_fermentable.recipe_id = r.id
+                        ) fermentable
+                        ON
+                            TRUE
+
+                        LEFT JOIN (
+                            SELECT string_agg(replace(inventory_yeast_id::text, '-', ''), ' ') AS data FROM data.recipe_yeast WHERE data.recipe_yeast.recipe_id = r.id
+                        ) yeast
+                        ON
+                            TRUE
+
+                        LEFT JOIN (
+                            SELECT string_agg(replace(inventory_adjunct_id::text, '-', ''), ' ') AS data FROM data.recipe_adjunct WHERE data.recipe_adjunct.recipe_id = r.id
+                        ) adjunct
+                        ON
+                            TRUE
+                    )::text
+                )
+        ) AS inventory_search
+    FROM
+        data.recipe r
+    WHERE
+        r.state = 'active'
+;
+
+ALTER TABLE data.search OWNER TO shbf_writer;
+CREATE UNIQUE INDEX IF NOT EXISTS search_id_idx ON data.search (id);
+CREATE INDEX IF NOT EXISTS search_input_search_idx ON data.search USING GIN (input_search);
+CREATE INDEX IF NOT EXISTS search_inventory_search_idx ON data.search USING GIN (inventory_search);
+REFRESH MATERIALIZED VIEW data.search;
+
