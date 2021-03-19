@@ -77,7 +77,7 @@ BEGIN
                 FROM (
                     SELECT
                         word::uuid AS inventory_id,
-                        ndoc
+                        ndoc AS "count"
                     FROM
                         ts_stat('
                             SELECT
