@@ -18,3 +18,6 @@
 
 -- Search
 \i ./functions/search.sql
+
+-- Development
+\i ./functions/clear_db.sql
