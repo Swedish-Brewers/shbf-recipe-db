@@ -87,6 +87,8 @@ BEGIN
                             WHERE
                                 id IN (''' || array_to_string(l_found, ''',''') || ''')
                         ')
+                    WHERE
+                        char_length(word) = 32
                 ) h
             ) AS statistics
     ) AS t
