@@ -6,7 +6,8 @@ CREATE OR REPLACE FUNCTION functions.recipe_add_yeast(
     IN i_fermentation_time numeric,
     IN i_amount_unit data.enum_amount_unit DEFAULT 'pkg',
     IN i_fermentation_unit data.enum_fermentation_unit DEFAULT 'day',
-    IN i_fermentation_order integer DEFAULT 1
+    IN i_fermentation_order integer DEFAULT 1,
+    IN i_data jsonb DEFAULT NULL
 )
 
 RETURNS uuid AS $$
@@ -60,7 +61,8 @@ BEGIN
             amount_unit,
             fermentation_time,
             fermentation_unit,
-            fermentation_order
+            fermentation_order,
+            data
         ) VALUES (
             i_recipe_id,
             i_inventory_yeast_id,
@@ -68,7 +70,8 @@ BEGIN
             i_amount_unit,
             i_fermentation_time,
             i_fermentation_unit,
-            i_fermentation_order
+            i_fermentation_order,
+            i_data
         )
     RETURNING
         id

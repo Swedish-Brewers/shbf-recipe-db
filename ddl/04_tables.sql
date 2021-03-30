@@ -165,6 +165,7 @@ CREATE TABLE IF NOT EXISTS data.recipe_fermentable (
     amount                       numeric NOT NULL,
     amount_unit                  data.enum_amount_unit NOT NULL DEFAULT 'g',
     phase                        data.enum_phase NOT NULL DEFAULT 'mash',
+    data                         jsonb,
     created                      timestamptz NOT NULL DEFAULT NOW()
 );
 
@@ -182,6 +183,7 @@ CREATE TABLE IF NOT EXISTS data.recipe_hop (
     phase                 data.enum_phase NOT NULL DEFAULT 'boil',
     added_at              integer NOT NULL,
     added_at_unit         data.enum_added_at_unit NOT NULL DEFAULT 'minute',
+    data                  jsonb,
     created               timestamptz NOT NULL DEFAULT NOW()
 );
 
@@ -199,6 +201,7 @@ CREATE TABLE IF NOT EXISTS data.recipe_yeast (
     fermentation_time     numeric,
     fermentation_unit     data.enum_fermentation_unit DEFAULT 'day',
     fermentation_order    integer DEFAULT 1,
+    data                  jsonb,
     created               timestamptz NOT NULL DEFAULT NOW()
 );
 
@@ -216,6 +219,7 @@ CREATE TABLE IF NOT EXISTS data.recipe_adjunct (
     phase                 data.enum_phase NOT NULL DEFAULT 'boil',
     added_at              integer,
     added_at_unit         data.enum_added_at_unit DEFAULT 'minute',
+    data                  jsonb,
     created               timestamptz NOT NULL DEFAULT NOW(),
 
     CHECK (CASE WHEN phase = 'boil' THEN added_at IS NOT NULL AND added_at_unit IS NOT NULL ELSE TRUE END)

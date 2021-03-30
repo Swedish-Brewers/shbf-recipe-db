@@ -6,7 +6,8 @@ CREATE OR REPLACE FUNCTION functions.recipe_add_hop(
     IN i_added_at integer,
     IN i_amount_unit data.enum_amount_unit DEFAULT 'g',
     IN i_phase data.enum_phase DEFAULT 'boil',
-    IN i_added_at_unit data.enum_added_at_unit DEFAULT 'minute'
+    IN i_added_at_unit data.enum_added_at_unit DEFAULT 'minute',
+    IN i_data jsonb DEFAULT NULL
 )
 
 RETURNS uuid AS $$
@@ -60,7 +61,8 @@ BEGIN
             added_at,
             amount_unit,
             added_at_unit,
-            phase
+            phase,
+            data
         ) VALUES (
             i_recipe_id,
             i_inventory_hop_id,
@@ -68,7 +70,8 @@ BEGIN
             i_added_at,
             i_amount_unit,
             i_added_at_unit,
-            i_phase
+            i_phase,
+            i_data
         )
     RETURNING
         id
