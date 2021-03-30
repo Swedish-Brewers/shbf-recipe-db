@@ -43,9 +43,13 @@ BEGIN
     ) THEN
         CREATE TYPE data.enum_phase AS ENUM (
             'mash',
+            'overnight',
             'boil',
             'whirlpool',
+            'hopstand',
             'flameout',
+            'firstwort',
+            'primary',
             'secondary',
             'dryhop'
         );
