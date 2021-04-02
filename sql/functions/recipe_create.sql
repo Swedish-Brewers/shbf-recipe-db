@@ -1,5 +1,6 @@
 CREATE OR REPLACE FUNCTION functions.recipe_create(
     -- IN VARIABLES
+    IN i_event_id uuid,
     IN i_name text,
     IN i_batch_size integer,
     IN i_equipment text,
@@ -19,6 +20,13 @@ BEGIN
     --
     -- Checking of input params starts here
     --
+
+    IF i_event_id IS NULL THEN
+        RAISE SQLSTATE 'RC400'
+        USING MESSAGE = 'EMPTY_EVENT_ID',
+            DETAIL = 'evnt_id is empty!',
+            HINT = 'recipe_create';
+    END IF;
 
     IF i_name IS NULL OR i_name = '' THEN
         RAISE SQLSTATE 'RC400'
@@ -47,6 +55,7 @@ BEGIN
 
     INSERT INTO
         data.recipe (
+            event_id,
             name,
             version,
             description,
@@ -55,6 +64,7 @@ BEGIN
             water_data,
             batch_size
         ) VALUES (
+            i_event_id,
             i_name,
             i_version,
             i_description,
