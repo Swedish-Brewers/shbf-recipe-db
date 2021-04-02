@@ -1,3 +1,6 @@
+-- Event
+\i ./functions/event_create.sql
+
 -- Recipes
 \i ./functions/recipe_create.sql
 \i ./functions/recipe_add_hop.sql

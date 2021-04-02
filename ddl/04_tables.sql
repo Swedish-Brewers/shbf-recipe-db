@@ -98,6 +98,22 @@ ALTER TABLE data.inventory_adjunct_mapping OWNER TO shbf_writer;
 CREATE INDEX IF NOT EXISTS inventory_adjunct_mapping_inventory_adjunct_id_idx ON data.inventory_adjunct_mapping (inventory_adjunct_id);
 
 
+CREATE TABLE IF NOT EXISTS data.event (
+    id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    name        text NOT NULL,
+    start_at    timestamptz NOT NULL,
+    finish_at   timestamptz NOT NULL,
+    location    text NOT NULL,
+    data        jsonb,
+    created     timestamptz NOT NULL DEFAULT NOW(),
+    updated     timestamptz NOT NULL DEFAULT NOW(),
+
+    UNIQUE(name, start_at)
+);
+
+ALTER TABLE data.event OWNER TO shbf_writer;
+
+
 CREATE TABLE IF NOT EXISTS data.brewer (
     id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     name        text NOT NULL,
@@ -107,18 +123,25 @@ CREATE TABLE IF NOT EXISTS data.brewer (
 
 ALTER TABLE data.brewer OWNER TO shbf_writer;
 
+
 CREATE TABLE IF NOT EXISTS data.award (
     id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    event_id    uuid NOT NULL REFERENCES data.event (id),
     name        text NOT NULL,
     created     timestamptz NOT NULL DEFAULT NOW(),
-    updated     timestamptz NOT NULL DEFAULT NOW()
+    updated     timestamptz NOT NULL DEFAULT NOW(),
+
+    UNIQUE(event_id, name)
 );
 
 ALTER TABLE data.award OWNER TO shbf_writer;
 
+
 CREATE TABLE IF NOT EXISTS data.recipe (
     id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    event_id      uuid NOT NULL REFERENCES data.event (id),
     name          text NOT NULL,
+    style         text,
     version       text,
     description   text,
     equipment     text,
@@ -131,6 +154,8 @@ CREATE TABLE IF NOT EXISTS data.recipe (
 );
 
 ALTER TABLE data.recipe OWNER TO shbf_writer;
+CREATE INDEX IF NOT EXISTS recipe_event_id_idx ON data.recipe (event_id);
+
 
 CREATE TABLE IF NOT EXISTS data.recipe_award (
     id                    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
