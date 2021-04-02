@@ -10,11 +10,19 @@
 \i ./functions/inventory_hop_create.sql
 \i ./functions/inventory_hop_mapping_create.sql
 \i ./functions/inventory_hop_mapping_update.sql
+\i ./functions/inventory_hop_get_from_mapping.sql
 \i ./functions/inventory_fermentable_create.sql
+\i ./functions/inventory_fermentable_mapping_create.sql
+\i ./functions/inventory_fermentable_mapping_update.sql
+\i ./functions/inventory_fermentable_get_from_mapping.sql
 \i ./functions/inventory_yeast_create.sql
+\i ./functions/inventory_yeast_mapping_create.sql
+\i ./functions/inventory_yeast_mapping_update.sql
+\i ./functions/inventory_yeast_get_from_mapping.sql
 \i ./functions/inventory_adjunct_create.sql
 \i ./functions/inventory_adjunct_mapping_create.sql
 \i ./functions/inventory_adjunct_mapping_update.sql
+\i ./functions/inventory_adjunct_get_from_mapping.sql
 
 -- Search
 \i ./functions/search.sql
