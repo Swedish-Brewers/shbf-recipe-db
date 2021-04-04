@@ -390,7 +390,15 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS data.search AS
                     ' ',
                     r.description,
                     ' ',
-                    r.equipment
+                    r.equipment,
+                    ' ',
+                    r.batch_size::text,
+                    ' ',
+                    r.og::text,
+                    ' ',
+                    r.fg::text,
+                    ' ',
+                    r.abv::text
                 )
             )
             ||
