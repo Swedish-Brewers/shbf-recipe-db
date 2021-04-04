@@ -147,7 +147,10 @@ CREATE TABLE IF NOT EXISTS data.recipe (
     equipment     text,
     mash_data     jsonb,
     water_data    jsonb,
-    batch_size    integer,
+    batch_size    integer NOT NULL,
+    og            numeric NOT NULL,
+    fg            numeric NOT NULL,
+    abv           numeric NOT NULL,
     state         data.enum_state NOT NULL DEFAULT 'inactive',
     created       timestamptz NOT NULL DEFAULT NOW(),
     updated       timestamptz NOT NULL DEFAULT NOW()
