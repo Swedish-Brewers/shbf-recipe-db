@@ -3,6 +3,7 @@
 
 -- Recipes
 \i ./functions/recipe_create.sql
+\i ./functions/recipe_update.sql
 \i ./functions/recipe_add_hop.sql
 \i ./functions/recipe_add_fermentable.sql
 \i ./functions/recipe_add_yeast.sql
