@@ -386,6 +386,8 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS data.search AS
                 CONCAT(
                     r.name,
                     ' ',
+                    r.style,
+                    ' ',
                     r.version,
                     ' ',
                     r.description,

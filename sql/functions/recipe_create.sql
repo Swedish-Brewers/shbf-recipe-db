@@ -9,6 +9,7 @@ CREATE OR REPLACE FUNCTION functions.recipe_create(
     IN i_equipment text,
     IN i_version text DEFAULT NULL,
     IN i_description text DEFAULT NULL,
+    IN i_style text DEFAULT NULL,
     IN i_mash_data jsonb DEFAULT NULL,
     IN i_water_data jsonb DEFAULT NULL
 )
@@ -81,6 +82,7 @@ BEGIN
         data.recipe (
             event_id,
             name,
+            style,
             version,
             description,
             equipment,
@@ -93,6 +95,7 @@ BEGIN
         ) VALUES (
             i_event_id,
             i_name,
+            i_style,
             i_version,
             i_description,
             i_equipment,

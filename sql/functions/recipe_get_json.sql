@@ -33,6 +33,7 @@ BEGIN
         SELECT
             id,
             name,
+            style,
             version,
             description,
             equipment,
