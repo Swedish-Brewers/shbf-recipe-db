@@ -18,6 +18,7 @@ BEGIN
     TRUNCATE TABLE data.inventory_adjunct_mapping CASCADE;
     TRUNCATE TABLE data.brewer CASCADE;
     TRUNCATE TABLE data.award CASCADE;
+    TRUNCATE TABLE data.event CASCADE;
     TRUNCATE TABLE data.recipe CASCADE;
     TRUNCATE TABLE data.recipe_award CASCADE;
     TRUNCATE TABLE data.recipe_brewer CASCADE;

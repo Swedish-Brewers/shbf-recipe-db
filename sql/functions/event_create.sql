@@ -64,6 +64,11 @@ BEGIN
             i_location,
             i_data
         )
+    ON CONFLICT
+        (name, location, start_at)
+    DO UPDATE SET
+        data = EXCLUDED.data,
+        updated = NOW()
     RETURNING
         id
     INTO

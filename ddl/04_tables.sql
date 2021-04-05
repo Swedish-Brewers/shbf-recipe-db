@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS data.event (
     created     timestamptz NOT NULL DEFAULT NOW(),
     updated     timestamptz NOT NULL DEFAULT NOW(),
 
-    UNIQUE(name, start_at)
+    UNIQUE(name, location, start_at)
 );
 
 ALTER TABLE data.event OWNER TO shbf_writer;
