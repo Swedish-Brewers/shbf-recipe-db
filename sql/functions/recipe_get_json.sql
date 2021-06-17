@@ -137,7 +137,7 @@ BEGIN
 END;
 
 $$ LANGUAGE plpgsql
-VOLATILE
+STABLE
 SECURITY DEFINER
 SET search_path = data, pg_temp;
 

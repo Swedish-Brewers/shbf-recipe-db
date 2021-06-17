@@ -1,7 +1,11 @@
 CREATE OR REPLACE FUNCTION functions.search(
     -- IN VARIABLES
     IN i_inventory text DEFAULT NULL,
-    IN i_input text DEFAULT NULL
+    IN i_input text DEFAULT NULL,
+    IN i_order_by_column data.enum_order_by_column DEFAULT 'abv',
+    IN i_order_by_asc_desc data.enum_order_by_asc_desc DEFAULT 'desc',
+    IN i_limit integer DEFAULT NULL,
+    IN i_offset integer DEFAULT 0
 )
 
 RETURNS jsonb AS $$
@@ -28,49 +32,60 @@ BEGIN
     --
 
     -- Search input
-    IF i_input IS NOT NULL THEN
-        l_found := array_cat(l_found, ARRAY(
-                SELECT
-                    id
-                FROM
-                    data.search
-                WHERE
-                    input_search @@ websearch_to_tsquery(i_input)
-            )
-        );
-    END IF;
-
-    -- Search inventory
-    IF i_inventory IS NOT NULL THEN
-        l_found := array_cat(l_found, ARRAY(
-                SELECT
-                    id
-                FROM
-                    data.search
-                WHERE
-                    inventory_search @@ to_tsquery(replace(i_inventory, '-', ''))
-            )
-        );
-    END IF;
+    l_found := array_cat(l_found, ARRAY(
+            SELECT
+                id
+            FROM
+                data.search
+            WHERE
+                (
+                    CASE WHEN
+                        i_input IS NULL
+                    THEN
+                        TRUE
+                    ELSE
+                        input_search @@ websearch_to_tsquery(i_input)
+                    END
+                )
+                AND (
+                    CASE WHEN
+                        i_inventory IS NULL
+                    THEN
+                        TRUE
+                    ELSE
+                        inventory_search @@ to_tsquery(replace(i_inventory, '-', ''))
+                    END
+                )
+        )
+    );
 
     -- Return here if there are nothing found
     IF array_length(l_found, 1) IS NULL THEN
         RETURN NULL;
     END IF;
 
-    -- Remove duplicates from the result array if both in parameters are used
-    IF i_input IS NOT NULL AND i_inventory IS NOT NULL THEN
-        l_found := ARRAY(SELECT DISTINCT UNNEST(l_found));
-    END IF;
 
     -- Build a json from the result(s)
     SELECT
         row_to_json(t) AS result
     FROM (
         SELECT
-            -- Possibly we want to get the actual recipes here like:
-            -- loop the l_found and fetch with recipe_get_json(id)
-            array_to_json(l_found) AS recipes,
+            array_length(l_found, 1) AS recipe_count,
+            (
+                SELECT
+                    *
+                FROM
+                    functions.search_result(
+                        l_found,
+                        i_order_by_column,
+                        i_order_by_asc_desc,
+                        i_limit,
+                        i_offset
+                    )
+            ) AS recipes,
+            -- This can be removed if we don't want to query search_result by itself
+            -- or the dataset gets too large for clients to handle.
+            array_to_json(l_found) AS recipe_ids,
             (
                 SELECT
                     array_to_json(array_agg(row_to_json(h)))
@@ -100,7 +115,7 @@ BEGIN
 END;
 
 $$ LANGUAGE plpgsql
-VOLATILE
+STABLE
 SECURITY DEFINER
 SET search_path = data, pg_temp;
 

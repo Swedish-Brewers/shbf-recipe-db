@@ -30,6 +30,7 @@
 
 -- Search
 \i ./functions/search.sql
+\i ./functions/search_result.sql
 
 -- Development
 \i ./functions/clear_db.sql
