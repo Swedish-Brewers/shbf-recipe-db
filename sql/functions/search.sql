@@ -92,6 +92,7 @@ BEGIN
                 FROM (
                     SELECT
                         word::uuid AS inventory_id,
+                        inventory AS inventory_type,
                         ndoc AS "count"
                     FROM
                         ts_stat('
@@ -102,6 +103,10 @@ BEGIN
                             WHERE
                                 id IN (''' || array_to_string(l_found, ''',''') || ''')
                         ')
+                    LEFT JOIN
+                        data.inventory_usage
+                    ON
+                        data.inventory_usage.id = word::uuid
                     WHERE
                         char_length(word) = 32
                 ) h
