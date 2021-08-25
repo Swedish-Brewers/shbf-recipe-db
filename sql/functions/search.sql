@@ -20,12 +20,13 @@ BEGIN
     -- Checking of input params starts here
     --
 
-    IF (i_inventory IS NULL OR i_inventory = '') AND (i_input IS NULL OR i_input = '') THEN
-        RAISE SQLSTATE 'RC400'
-        USING MESSAGE = 'EMPTY_PARAMETERS',
-            DETAIL = 'both inventory and input is empty!',
-            HINT = 'search';
-    END IF;
+    -- Enable if we don't want a possible full table scan
+    --IF (i_inventory IS NULL OR i_inventory = '') AND (i_input IS NULL OR i_input = '') THEN
+    --    RAISE SQLSTATE 'RC400'
+    --    USING MESSAGE = 'EMPTY_PARAMETERS',
+    --        DETAIL = 'both inventory and input is empty!',
+    --        HINT = 'search';
+    --END IF;
 
     --
     -- Function body starts here
