@@ -53,7 +53,7 @@ BEGIN
                     array_to_json(array_agg(row_to_json(h)))
                 FROM (
                     SELECT
-                        ih.id AS inventory_hop_id,
+                        ih.id AS inventory_id,
                         ih.name AS name,
                         amount,
                         amount_unit,
@@ -77,7 +77,7 @@ BEGIN
                     array_to_json(array_agg(row_to_json(f)))
                 FROM (
                     SELECT
-                        infe.id AS inventory_fermentable_id,
+                        infe.id AS inventory_id,
                         infe.name AS name,
                         amount,
                         amount_unit,
@@ -99,7 +99,7 @@ BEGIN
                     array_to_json(array_agg(row_to_json(y)))
                 FROM (
                     SELECT
-                        iy.id AS inventory_yeast_id,
+                        iy.id AS inventory_id,
                         iy.name AS name,
                         amount,
                         amount_unit,
@@ -123,7 +123,7 @@ BEGIN
                     array_to_json(array_agg(row_to_json(a)))
                 FROM (
                     SELECT
-                        ia.id AS inventory_adjunct_id,
+                        ia.id AS inventory_id,
                         ia.name AS name,
                         amount,
                         amount_unit,
