@@ -53,7 +53,8 @@ BEGIN
                     array_to_json(array_agg(row_to_json(h)))
                 FROM (
                     SELECT
-                        (SELECT name FROM data.inventory_hop ih WHERE ih.id = rh.inventory_hop_id) AS name,
+                        ih.id AS inventory_hop_id,
+                        ih.name AS name,
                         amount,
                         amount_unit,
                         phase,
@@ -61,6 +62,10 @@ BEGIN
                         added_at_unit
                     FROM
                         data.recipe_hop rh
+                    INNER JOIN
+                        data.inventory_hop ih
+                    ON
+                        ih.id = rh.inventory_hop_id
                     WHERE
                         rh.recipe_id = r.id
                 ) h
@@ -72,12 +77,17 @@ BEGIN
                     array_to_json(array_agg(row_to_json(f)))
                 FROM (
                     SELECT
-                        (SELECT name FROM data.inventory_fermentable ife WHERE ife.id = rf.inventory_fermentable_id) AS name,
+                        infe.id AS inventory_fermentable_id,
+                        infe.name AS name,
                         amount,
                         amount_unit,
                         phase
                     FROM
                         data.recipe_fermentable rf
+                    INNER JOIN
+                        data.inventory_fermentable infe
+                    ON
+                        infe.id = rf.inventory_fermentable_id
                     WHERE
                         rf.recipe_id = r.id
                 ) f
@@ -89,7 +99,8 @@ BEGIN
                     array_to_json(array_agg(row_to_json(y)))
                 FROM (
                     SELECT
-                        (SELECT name FROM data.inventory_yeast iy WHERE iy.id = ry.inventory_yeast_id) AS name,
+                        iy.id AS inventory_yeast_id,
+                        iy.name AS name,
                         amount,
                         amount_unit,
                         fermentation_time,
@@ -97,6 +108,10 @@ BEGIN
                         fermentation_order
                     FROM
                         data.recipe_yeast ry
+                    INNER JOIN
+                        data.inventory_yeast iy
+                    ON
+                        iy.id = ry.inventory_yeast_id
                     WHERE
                         ry.recipe_id = r.id
                 ) y
@@ -108,7 +123,8 @@ BEGIN
                     array_to_json(array_agg(row_to_json(a)))
                 FROM (
                     SELECT
-                        (SELECT name FROM data.inventory_adjunct ia WHERE ia.id = ra.inventory_adjunct_id) AS name,
+                        ia.id AS inventory_adjunct_id,
+                        ia.name AS name,
                         amount,
                         amount_unit,
                         added_at,
@@ -116,6 +132,10 @@ BEGIN
                         phase
                     FROM
                         data.recipe_adjunct ra
+                    INNER JOIN
+                        data.inventory_adjunct ia
+                    ON
+                        ia.id = ra.inventory_adjunct_id
                     WHERE
                         ra.recipe_id = r.id
                 ) a
