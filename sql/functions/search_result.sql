@@ -4,13 +4,15 @@ CREATE OR REPLACE FUNCTION functions.search_result(
     IN i_order_by_column data.enum_order_by_column DEFAULT 'abv',
     IN i_order_by_asc_desc data.enum_order_by_asc_desc DEFAULT 'desc',
     IN i_limit integer DEFAULT NULL,
-    IN i_offset integer DEFAULT 0
+    IN i_offset integer DEFAULT 0,
+    IN i_vitals jsonb DEFAULT NULL
 )
 
 RETURNS jsonb AS $$
 
 DECLARE
 	l_json jsonb;
+    l_vitals text;
 
 BEGIN
 
@@ -28,6 +30,35 @@ BEGIN
     --
     -- Function body starts here
     --
+
+
+
+    -- Build a vitals delimiter string
+    IF i_vitals IS NOT NULL THEN
+        WITH a AS (
+            SELECT
+                key,
+                value
+            FROM
+                jsonb_each(i_vitals)
+            WHERE
+                key IN ('og', 'fg', 'abv')
+        )
+        SELECT
+            string_agg(
+                (
+                    (CASE WHEN value::jsonb->'max' IS NOT NULL THEN (' AND ' || key || ' <= ' || (SELECT a.value::jsonb->>'max' FROM a AS b WHERE a.key = b.key) || ' ') ELSE '' END)
+                    ||
+                    (CASE WHEN value::jsonb->'min' IS NOT NULL THEN (' AND ' || key || ' <= ' || (SELECT a.value::jsonb->>'min' FROM a AS b WHERE a.key = b.key) || ' ') ELSE '' END)
+                ),
+                ' '
+            )
+        INTO
+            l_vitals
+        FROM
+            a;
+    END IF;
+
 
     -- Build a minimal result for listing recipes
 	-- TODO: Decide on what columns to show
@@ -56,6 +87,7 @@ BEGIN
 				data.recipe
 			WHERE
 				id = ANY(ARRAY[''' || array_to_string(i_ids, '''::uuid,''') || '''])
+                ' || (CASE WHEN l_vitals IS NOT NULL THEN l_vitals ELSE '' END) || '
 			ORDER BY
 				data.recipe.' || i_order_by_column::text || ' ' || i_order_by_asc_desc::text || '
 			LIMIT ' || (CASE WHEN i_limit IS NULL THEN 'ALL' ELSE i_limit::text END) || '

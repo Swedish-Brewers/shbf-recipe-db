@@ -5,7 +5,8 @@ CREATE OR REPLACE FUNCTION functions.search(
     IN i_order_by_column data.enum_order_by_column DEFAULT 'abv',
     IN i_order_by_asc_desc data.enum_order_by_asc_desc DEFAULT 'desc',
     IN i_limit integer DEFAULT NULL,
-    IN i_offset integer DEFAULT 0
+    IN i_offset integer DEFAULT 0,
+    IN i_vitals jsonb DEFAULT NULL
 )
 
 RETURNS jsonb AS $$
@@ -81,9 +82,27 @@ BEGIN
                         i_order_by_column,
                         i_order_by_asc_desc,
                         i_limit,
-                        i_offset
+                        i_offset,
+                        i_vitals
                     )
             ) AS recipes,
+            (
+                SELECT
+                    row_to_json(v)
+                FROM (
+                    SELECT
+                        MAX(abv) AS abv_max,
+                        MIN(abv) AS abv_min,
+                        MAX(og) AS og_max,
+                        MIN(og) AS og_min,
+                        MAX(fg) AS fg_max,
+                        MIN(fg) AS fg_min
+                    FROM
+                        data.recipe
+                    WHERE
+                        id = ANY(l_found)
+                ) v
+            ) AS vitals,
             -- This can be removed if we don't want to query search_result by itself
             -- or the dataset gets too large for clients to handle.
             array_to_json(l_found) AS recipe_ids,
