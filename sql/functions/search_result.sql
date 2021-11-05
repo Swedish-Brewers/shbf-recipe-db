@@ -49,7 +49,7 @@ BEGIN
                 (
                     (CASE WHEN value::jsonb->'max' IS NOT NULL THEN (' AND ' || key || ' <= ' || (SELECT a.value::jsonb->>'max' FROM a AS b WHERE a.key = b.key) || ' ') ELSE '' END)
                     ||
-                    (CASE WHEN value::jsonb->'min' IS NOT NULL THEN (' AND ' || key || ' <= ' || (SELECT a.value::jsonb->>'min' FROM a AS b WHERE a.key = b.key) || ' ') ELSE '' END)
+                    (CASE WHEN value::jsonb->'min' IS NOT NULL THEN (' AND ' || key || ' >= ' || (SELECT a.value::jsonb->>'min' FROM a AS b WHERE a.key = b.key) || ' ') ELSE '' END)
                 ),
                 ' '
             )
