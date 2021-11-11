@@ -31,8 +31,6 @@ BEGIN
     -- Function body starts here
     --
 
-
-
     -- Build a vitals delimiter string
     IF i_vitals IS NOT NULL THEN
         WITH a AS (
@@ -63,7 +61,7 @@ BEGIN
     -- Build a minimal result for listing recipes
 	-- TODO: Decide on what columns to show
 
-	EXECUTE ('
+	EXECUTE('
 		SELECT
 			array_to_json(array_agg(row_to_json(r))) AS result
 		FROM (
@@ -86,11 +84,17 @@ BEGIN
 			FROM
 				data.recipe
 			WHERE
-				id = ANY(ARRAY[''' || array_to_string(i_ids, '''::uuid,''') || '''])
-                ' || (CASE WHEN l_vitals IS NOT NULL THEN l_vitals ELSE '' END) || '
-			ORDER BY
-				data.recipe.' || i_order_by_column::text || ' ' || i_order_by_asc_desc::text || '
+				id = ANY(ARRAY[''' || array_to_string(i_ids, '''::uuid,') || '''::uuid])
+
+                ' || (CASE WHEN l_vitals IS NOT NULL THEN l_vitals ELSE '' END) ||
+
+                (CASE WHEN i_order_by_column IS NOT NULL THEN (
+            ' ORDER BY
+				data.recipe.' || i_order_by_column::text || ' ' || i_order_by_asc_desc::text
+                ) ELSE ' ' END) || '
+
 			LIMIT ' || (CASE WHEN i_limit IS NULL THEN 'ALL' ELSE i_limit::text END) || '
+
 			OFFSET ' || i_offset::text || '
 		) AS r
 		')
