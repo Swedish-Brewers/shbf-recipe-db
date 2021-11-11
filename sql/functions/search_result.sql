@@ -84,7 +84,7 @@ BEGIN
 			FROM
 				data.recipe
 			WHERE
-				id = ANY(ARRAY[''' || array_to_string(i_ids, '''::uuid,') || '''::uuid])
+				id = ANY(ARRAY[''' || array_to_string(i_ids, '''::uuid,''') || '''::uuid])
 
                 ' || (CASE WHEN l_vitals IS NOT NULL THEN l_vitals ELSE '' END) ||
 
